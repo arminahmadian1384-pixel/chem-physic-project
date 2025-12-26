@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>پروژه شیمی فیزیک</title>
+
+<style>
+body{
+  font-family: Tahoma;
+  background: linear-gradient(135deg,#e0f2f1,#f1f8e9);
+  text-align:center;
+  direction:rtl;
+}
+.box{
+  background:white;
+  width:360px;
+  margin:80px auto;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  animation: fadeIn 0.8s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+h3{
+  color:#2e7d32;
+}
+input{
+  width:90%;
+  margin:6px;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+button{
+  padding:10px 30px;
+  margin-top:12px;
+  border:none;
+  border-radius:20px;
+  background:#2e7d32;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+button:hover{
+  background:#1b5e20;
+}
+#result{
+  margin-top:18px;
+  font-weight:bold;
+}
+.small{
+  font-size:13px;
+  color:#555;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>⚗️</h2>
+  <h3>محاسبه ترمودینامیکی واکنش</h3>
+
+  <p class="small">
+  این ابزار برای بررسی خودبه‌خودی بودن واکنش‌ها و ارتباط آن با ثابت تعادل طراحی شده است.
+  </p>
+
+  <input id="deltaH" type="number" placeholder="ΔH (kJ/mol)">
+  <input id="deltaS" type="number" placeholder="ΔS (kJ/mol.K)">
+  <input id="T" type="number" placeholder="دما (K)">
+
+  <br>
+  <button onclick="calculate()">محاسبه</button>
+
+  <div id="result"></div>
+
+  <p class="small">
+  کاربرد: این محاسبات در شیمی صنعتی و بررسی امکان‌پذیری
+  واکنش‌ها و فرآیندهای شیمیایی استفاده می‌شود.
+  </p>
+</div>
+
+<script>
+function calculate(){
+  let deltaH = Number(document.getElementById("deltaH").value);
+  let deltaS = Number(document.getElementById("deltaS").value);
+  let T = Number(document.getElementById("T").value);
+
+  let deltaG = deltaH - (T * deltaS);
+
+  let R = 0.008314; // kJ/mol.K
+  let K = Math.exp(-deltaG / (R * T));
+
+  let text = "ΔG = " + deltaG.toFixed(2) + " kJ/mol<br>";
+
+  if(deltaG < -10){
+    text += "واکنش به شدت خودبه‌خودی است 🔥<br>";
+  } else if(deltaG < 0){
+    text += "واکنش خودبه‌خودی است ✅<br>";
+  } else if(deltaG < 5){
+    text += "واکنش نزدیک به تعادل است ⚖️<br>";
+  } else {
+    text += "واکنش خودبه‌خودی نیست ❌<br>";
+  }
+
+  text += "ثابت تعادل K = " + K.toExponential(2);
+
+  document.getElementById("result").innerHTML = text;
+}
+</script>
+
+</body>
+</html>
