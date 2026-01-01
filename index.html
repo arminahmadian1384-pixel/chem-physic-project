@@ -2,116 +2,136 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>پروژه شیمی فیزیک</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سایت شیمی فیزیک پیشرفته</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body{
-  font-family: Tahoma;
-  background: linear-gradient(135deg,#e0f2f1,#f1f8e9);
-  text-align:center;
-  direction:rtl;
-}
-.box{
-  background:white;
-  width:360px;
-  margin:80px auto;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-  animation: fadeIn 0.8s ease;
-}
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
-}
-h3{
-  color:#2e7d32;
-}
-input{
-  width:90%;
-  margin:6px;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-button{
-  padding:10px 30px;
-  margin-top:12px;
-  border:none;
-  border-radius:20px;
-  background:#2e7d32;
-  color:white;
-  font-size:15px;
-  cursor:pointer;
-}
-button:hover{
-  background:#1b5e20;
-}
-#result{
-  margin-top:18px;
-  font-weight:bold;
-}
-.small{
-  font-size:13px;
-  color:#555;
-  margin-top:12px;
-}
+    body { font-family: Arial, sans-serif; background-color: #e0f0ff; color: #003366; margin:0; }
+    header { background-color: #cce0ff; padding: 20px; text-align: center; font-size: 28px; color: #003366; font-weight: bold; border-bottom: 2px solid #003366; }
+    nav { display: flex; justify-content: center; background-color: #b3d1ff; flex-wrap: wrap; border-bottom: 2px solid #003366; }
+    nav button { padding: 15px 25px; margin: 5px; background-color: #ffffff; color: #003366; border: 2px solid #003366; cursor: pointer; font-size: 16px; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; }
+    nav button i { margin-left: 8px; }
+    nav button:hover { background-color: #003366; color: #ffffff; }
+    section { display: none; padding: 20px; }
+    section.active { display: block; }
+    .card { background-color: #f0f8ff; border: 2px solid #003366; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    input, select { padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #003366; background-color: #ffffff; color: #003366; }
+    button.calculate { background-color: #003366; color: #ffffff; padding: 10px 20px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    button.calculate:hover { background-color: #001f33; }
+    .output { margin-top: 15px; font-size: 18px; }
+    .container { max-width: 900px; margin: auto; }
+    .note { font-size: 14px; color: #001f33; margin-bottom: 10px; }
+    .section-img { max-width: 100%; height: auto; margin-top: 15px; border-radius: 10px; display: block; }
+    .img-caption { text-align:center; font-size:14px; color:#001f33; margin-top:5px; }
 </style>
 </head>
-
 <body>
+<header><i class="fas fa-flask"></i> سایت شیمی فیزیک پیشرفته</header>
+<nav>
+    <button onclick="showSection('calc')"><i class="fas fa-calculator"></i> محاسبه ΔG/ΔH/ΔS</button>
+    <button onclick="showSection('graph')"><i class="fas fa-chart-line"></i> نمودار ΔG با دما</button>
+    <button onclick="showSection('kinetics')"><i class="fas fa-hourglass-half"></i> شبیه‌ساز کینتیک</button>
+    <button onclick="showSection('heat')"><i class="fas fa-thermometer-half"></i> ماشین‌حساب گرما</button>
+    <button onclick="showSection('help')"><i class="fas fa-book"></i> آموزش</button>
+</nav>
 
-<div class="box">
-  <h2>⚗️</h2>
-  <h3>محاسبه ترمودینامیکی واکنش</h3>
+<div class="container">
 
-  <p class="small">
-  این ابزار برای بررسی خودبه‌خودی بودن واکنش‌ها و ارتباط آن با ثابت تعادل طراحی شده است.
-  </p>
+<section id="calc" class="active card">
+    <h2>محاسبه ΔG، ΔH، ΔS و K</h2>
+    <img class="section-img" src="https://cdn.pixabay.com/photo/2017/03/23/18/03/chemistry-2168288_960_720.jpg" alt="Chemistry Lab">
+    <div class="img-caption">واکنش‌های شیمیایی در لابراتوار</div>
+    <p class="note">واحدها: ΔH → kJ/mol, ΔS → J/mol·K, ΔG → J/mol</p>
+    <label>ΔH (kJ/mol):</label><br>
+    <input type="number" id="dH" placeholder="مثلاً 40"><br>
+    <label>ΔS (J/mol·K):</label><br>
+    <input type="number" id="dS" placeholder="مثلاً 120"><br>
+    <label>دما (K):</label><br>
+    <input type="number" id="temp" placeholder="مثلاً 298"><br>
+    <button class="calculate" onclick="calculateThermo()">محاسبه</button>
+    <button class="calculate" onclick="fillExample()">مثال آماده</button>
+    <div class="output" id="calcOutput"></div>
+</section>
 
-  <input id="deltaH" type="number" placeholder="ΔH (kJ/mol)">
-  <input id="deltaS" type="number" placeholder="ΔS (kJ/mol.K)">
-  <input id="T" type="number" placeholder="دما (K)">
+<section id="graph" class="card">
+    <h2>نمودار ΔG با دما</h2>
+    <img class="section-img" src="https://cdn.pixabay.com/photo/2016/03/05/19/02/laboratory-1238945_960_720.jpg" alt="Graph Lab">
+    <div class="img-caption">نمای لابراتوار و نمودار</div>
+    <label>ΔH (kJ/mol):</label><br>
+    <input type="number" id="graphH" placeholder="مثلاً 40"><br>
+    <label>ΔS (J/mol·K):</label><br>
+    <input type="number" id="graphS" placeholder="مثلاً 120"><br>
+    <button class="calculate" onclick="plotDG()">نمایش نمودار</button>
+    <div id="graphDiv" style="height:500px;"></div>
+</section>
 
-  <br>
-  <button onclick="calculate()">محاسبه</button>
+<section id="kinetics" class="card">
+    <h2>شبیه‌ساز کینتیک واکنش</h2>
+    <img class="section-img" src="https://cdn.pixabay.com/photo/2017/05/29/17/00/laboratory-2353124_960_720.jpg" alt="Kinetics Lab">
+    <div class="img-caption">نمودار تغییر غلظت با زمان</div>
+    <label>غلظت اولیه [A] (mol/L):</label><br>
+    <input type="number" id="conc0" value="1"><br>
+    <label>ثابت سرعت k (1/s):</label><br>
+    <input type="number" id="k" value="0.1" step="0.01"><br>
+    <label>مدت زمان (s):</label><br>
+    <input type="number" id="time" value="50"><br>
+    <button class="calculate" onclick="plotKinetics()">شبیه‌سازی</button>
+    <div id="kineticsDiv" style="height:400px;"></div>
+</section>
 
-  <div id="result"></div>
+<section id="heat" class="card">
+    <h2>ماشین‌حساب گرما (q = m·c·ΔT)</h2>
+    <img class="section-img" src="https://cdn.pixabay.com/photo/2017/01/10/20/02/laboratory-1966750_960_720.jpg" alt="Heat Lab">
+    <div class="img-caption">محاسبات گرمایی در آزمایشگاه</div>
+    <label>جرم (g):</label><br>
+    <input type="number" id="mass"><br>
+    <label>ظرفیت گرمایی ویژه (J/g·K):</label><br>
+    <input type="number" id="c"><br>
+    <label>ΔT (K):</label><br>
+    <input type="number" id="deltaT"><br>
+    <button class="calculate" onclick="calculateHeat()">محاسبه q</button>
+    <div class="output" id="heatOutput"></div>
+</section>
 
-  <p class="small">
-  کاربرد: این محاسبات در شیمی صنعتی و بررسی امکان‌پذیری
-  واکنش‌ها و فرآیندهای شیمیایی استفاده می‌شود.
-  </p>
+<section id="help" class="card">
+    <h2>آموزش و راهنما</h2>
+    <p>این سایت برای کمک به یادگیری شیمی فیزیک طراحی شده است.</p>
+    <ul>
+        <li><b>ΔG, ΔH, ΔS:</b> تغییرات انرژی واکنش و امکان خودبه‌خودی بودن واکنش</li>
+        <li><b>واکنش خودبه‌خودی:</b> اگر ΔG &lt; 0 → خودبه‌خودی، اگر ΔG &gt; 0 → غیرخودبه‌خودی</li>
+        <li><b>واحدها:</b> ΔH → kJ/mol, ΔS → J/mol·K, ΔG → J/mol</li>
+        <li><b>نمودار ΔG با دما:</b> نشان می‌دهد در چه دماهایی واکنش خودبه‌خودی است</li>
+        <li><b>شبیه‌ساز کینتیک:</b> نحوه تغییر غلظت با زمان را نمایش می‌دهد</li>
+        <li><b>ماشین‌حساب گرما:</b> محاسبه q = m·c·ΔT</li>
+    </ul>
+</section>
+
 </div>
 
 <script>
-function calculate(){
-  let deltaH = Number(document.getElementById("deltaH").value);
-  let deltaS = Number(document.getElementById("deltaS").value);
-  let T = Number(document.getElementById("T").value);
-
-  let deltaG = deltaH - (T * deltaS);
-
-  let R = 0.008314; // kJ/mol.K
-  let K = Math.exp(-deltaG / (R * T));
-
-  let text = "ΔG = " + deltaG.toFixed(2) + " kJ/mol<br>";
-
-  if(deltaG < -10){
-    text += "واکنش به شدت خودبه‌خودی است 🔥<br>";
-  } else if(deltaG < 0){
-    text += "واکنش خودبه‌خودی است ✅<br>";
-  } else if(deltaG < 5){
-    text += "واکنش نزدیک به تعادل است ⚖️<br>";
-  } else {
-    text += "واکنش خودبه‌خودی نیست ❌<br>";
-  }
-
-  text += "ثابت تعادل K = " + K.toExponential(2);
-
-  document.getElementById("result").innerHTML = text;
+function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
-</script>
 
+function calculateThermo() {
+    let dH = parseFloat(document.getElementById('dH').value);
+    let dS = parseFloat(document.getElementById('dS').value);
+    let T = parseFloat(document.getElementById('temp').value);
+    if (isNaN(dH) || isNaN(dS) || isNaN(T)) {
+        document.getElementById('calcOutput').innerHTML = '<span style="color:#ff0000;">لطفاً همه فیلدها را پر کنید!</span>';
+        return;
+    }
+    let dG = dH*1000 - T*dS;
+    let K = Math.exp(-dG/(8.314*T));
+    let spontaneity = dG < 0 ? '<span style="color:#008000;font-weight:bold">واکنش خودبه‌خودی است</span>' : '<span style="color:#ff0000;font-weight:bold">واکنش خودبه‌خودی نیست</span>';
+    document.getElementById('calcOutput').innerHTML = `ΔG = ${dG.toFixed(2)} J/mol<br>ثابت تعادل K = ${K.toFixed(4)}<br>${spontaneity}`;
+}
+function fillExample() { document.getElementById('dH').value=40; document.getElementById('dS').value=120; document.getElementById('temp').value=298; calculateThermo(); }
+function plotDG() { let dH=parseFloat(document.getElementById('graphH').value); let dS=parseFloat(document.getElementById('graphS').value); let T=Array.from({length:100},(_,i)=>273+i*5); let dG=T.map(t=>dH*1000-t*dS); Plotly.newPlot('graphDiv',[{x:T,y:dG,mode:'lines+markers',line:{color:'#003366'}}],{title:'ΔG vs دما',xaxis:{title:'دما (K)'},yaxis:{title:'ΔG (J/mol)'},plot_bgcolor:'#e0f0ff',paper_bgcolor:'#e0f0ff',font:{color:'#003366'}});} 
+function plotKinetics(){let A0=parseFloat(document.getElementById('conc0').value); let k=parseFloat(document.getElementById('k').value); let tMax=parseFloat(document.getElementById('time').value); let t=Array.from({length:tMax+1},(_,i)=>i); let A=t.map(time=>A0*Math.exp(-k*time)); Plotly.newPlot('kineticsDiv',[{x:t,y:A,mode:'lines+markers',line:{color:'#003366'}}],{title:'شبیه‌ساز کینتیک',xaxis:{title:'زمان (s)'},yaxis:{title:'غلظت [A] (mol/L)'},plot_bgcolor:'#e0f0ff',paper_bgcolor:'#e0f0ff',font:{color:'#003366'}});} 
+function calculateHeat(){let m=parseFloat(document.getElementById('mass').value); let c=parseFloat(document.getElementById('c').value); let dT=parseFloat(document.getElementById('deltaT').value); if(isNaN(m)||isNaN(c)||isNaN(dT)){document.getElementById('heatOutput').innerHTML='<span style="color:#ff0000;">لطفاً همه فیلدها را پر کنید!</span>'; return;} let q=m*c*dT; document.getElementById('heatOutput').innerHTML=`q = ${q.toFixed(2)} J`;}
+</script>
 </body>
 </html>
